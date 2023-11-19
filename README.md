@@ -8,6 +8,7 @@ The Earthquake Monitor System Application is designed to provide real-time monit
 - certifi==2023.7.22
 - charset-normalizer==3.3.2
 - Django==4.2.7
+- django-cors-headers==4.3.1
 - djangorestframework==3.14.0
 - djangorestframework-gis==1.0
 - idna==3.4

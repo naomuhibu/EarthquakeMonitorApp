@@ -2,17 +2,17 @@ import "./App.css"; // Import CSS file
 import QuakeList from "./components/QuakeList";
 import QuakeView from "./components/QuakeView";
 import MapDisplay from "./components/MapDisplay";
-import Header from "./components/Header";
-import { useGeoNetData } from "./components/getQuakes";
+//import Header from "./components/Header";
+import { useEarthquakeData } from "./components/getQuakes"; // Changed from useGeoNetData to useEarthquakeData
 
 import { useState } from "react";
 
 function App() {
   const [data, setData] = useState(null); // [activeQuake, setActiveQuake]
-  const quakes = useGeoNetData(); // Fetch quake data with the custom hook
+  const quakes = useEarthquakeData(); // Fetch quake data with the custom hook
 
   // TODO: Display Quake Data in popup
-  const handleSelection = (newData) => {
+  const handleSelection = (newData: any) => {
     console.log("quake data: ", newData);
     setData(newData); // setActiveQuake
   };

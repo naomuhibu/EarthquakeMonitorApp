@@ -1,16 +1,20 @@
-interface vQuake {
-  lat: number;
-  lng: number;
-  mmi: number;
-  name: string;
-}
+import React from "react";
+import { Circle } from "@react-google-maps/api";
 
 interface QuakeViewProps {
-  vquake: vQuake;
+  vquake: {
+    lat: number;
+    lng: number;
+    mmi: number;
+    name: string;
+  };
   onSelectView: () => void;
 }
 
 const QuakeView: React.FC<QuakeViewProps> = ({ vquake, onSelectView }) => {
+  const bufferCenter: google.maps.LatLngLiteral = { lat: vquake.lat, lng: vquake.lng };
+  const bufferRadius = 500; // in meters
+
   const handleClick = () => {
     onSelectView();
   };
@@ -18,11 +22,9 @@ const QuakeView: React.FC<QuakeViewProps> = ({ vquake, onSelectView }) => {
   return (
     <>
       <div
-        className="card rounded position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
-        style={{ width: "18rem" }}
-        onClick={() => {
-          handleClick();
-        }}
+        className="card rounded position-absolute start-50 translate-middle d-flex align-items-center justify-content-center"
+        style={{ width: "18rem", top: "70vh" }}
+        onClick={handleClick}
       >
         <div className="card-body">
           <h3 className="card-title">Quake Information</h3>
@@ -49,6 +51,18 @@ const QuakeView: React.FC<QuakeViewProps> = ({ vquake, onSelectView }) => {
           </table>
         </div>
       </div>
+      {/* Draw buffer on the map */}
+      <Circle
+        center={bufferCenter}
+        radius={bufferRadius}
+        options={{
+          strokeColor: "#FF0000",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "#FF0000",
+          fillOpacity: 0.35,
+        }}
+      />
     </>
   );
 };

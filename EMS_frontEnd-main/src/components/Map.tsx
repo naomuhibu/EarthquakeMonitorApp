@@ -1,8 +1,5 @@
-import { useMemo, useCallback, useRef, useState } from "react";
-import { GoogleMap, Marker } from "@react-google-maps/api";
-
-type LatLngLiteral = google.maps.LatLngLiteral;
-type MapOptions = google.maps.MapOptions;
+import React, { useMemo, useCallback, useRef } from "react";
+import { GoogleMap, Marker} from "@react-google-maps/api";
 
 interface Location {
   lat: number;
@@ -16,21 +13,33 @@ interface MapProps {
   selectedMarker: (location: Location) => void;
 }
 
-export default function Map({ locations, selectedMarker }: MapProps) {
-  const mapRef = useRef<GoogleMap>();
-  const center = useMemo<LatLngLiteral>(() => ({ lat: -43, lng: 171 }), []);
-  const options = useMemo<MapOptions>(
+const Map: React.FC<MapProps> = ({ locations, selectedMarker }) => {
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const center = useMemo<google.maps.LatLngLiteral>(() => ({ lat: -43, lng: 171 }), []);
+  const options = useMemo<google.maps.MapOptions>(
     () => ({
-      mapId: "c36e4e976628b519",
+      mapId: "emsystem-405610",
       disableDefaultUI: true,
       clickableIcons: false,
+      apiKey: "AIzaSyAQhHv-aqe0Yb4k_5omd5vOEDhSALzfsXk",
     }),
     []
   );
-  const onLoad = useCallback((map) => (mapRef.current = map), []);
+
+  const onLoad = useCallback((map: google.maps.Map) => {
+    mapRef.current = map;
+  }, []);
 
   const markerClick = (location: Location) => {
+    // Call the selectedMarker function
     selectedMarker(location);
+    
+    // Zoom to the clicked marker location with a buffer
+    mapRef.current?.panTo({ lat: location.lat, lng: location.lng });
+    const bounds = new google.maps.LatLngBounds();
+    bounds.extend({ lat: location.lat + 0.01, lng: location.lng + 0.01 });
+    bounds.extend({ lat: location.lat - 0.01, lng: location.lng - 0.01 });
+    mapRef.current?.fitBounds(bounds);
   };
 
   return (
@@ -40,23 +49,20 @@ export default function Map({ locations, selectedMarker }: MapProps) {
           zoom={10}
           center={center}
           mapContainerClassName="map-container"
-          options={options}
+          options={options as google.maps.MapOptions} 
           onLoad={onLoad}
         >
           {locations.map((location) => (
             <Marker
               key={location.name}
               position={{ lat: location.lat, lng: location.lng }}
-              // Optional: Add a label or tooltip to display the MMI and name
-              // label={location.name}
-              onClick={() => {
-                markerClick(location);
-              }}
+              onClick={() => markerClick(location)}
             />
           ))}
         </GoogleMap>
-        <h1>hello world</h1>
       </div>
     </>
   );
-}
+};
+
+export default Map;

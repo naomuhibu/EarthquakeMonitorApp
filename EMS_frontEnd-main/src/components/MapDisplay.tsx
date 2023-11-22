@@ -1,25 +1,40 @@
-import Map from "../components/map";
-import { useLoadScript } from "@react-google-maps/api";
-import { useGeoNetData } from "../components/getQuakes";
-// import map from "../components/map";
+import React from "react";
+import Map from "../components/Map";
+import { useLoadScript, Libraries } from "@react-google-maps/api";
+import { useEarthquakeData } from "../components/getQuakes";
+import { useState } from "react";
+
+// Define libraries as a constant outside of the component
+const libraries: Libraries = ["places"];
 
 interface MapDisplayProps {
-  handleSelection: (data) => void;
+  handleSelection: (data: any) => void;
 }
 
 export default function MapDisplay({ handleSelection }: MapDisplayProps) {
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "",
-    libraries: ["places"],
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: "AIzaSyAQhHv-aqe0Yb4k_5omd5vOEDhSALzfsXk",
+    libraries: libraries, // Use the constant libraries here
   });
 
-  const markerSelected = (location) => {
+  const [selectedLocation, setSelectedLocation] = useState(null);
+
+  const markerSelected = (location: any) => {
+    setSelectedLocation(location);
     handleSelection(location);
   };
 
-  const quakes = useGeoNetData(); // Fetch the earthquake data
+  const quakes = useEarthquakeData(); // Fetch the earthquake data
 
-  // Pass the quakes data to the Map component
-  if (!isLoaded) return <div>Loading...</div>;
+  // Google Maps API is not loaded
+  if (!isLoaded) {
+    if (loadError) {
+      return <div>Error loading Google Maps API</div>;
+    } else {
+      return <div>Loading...</div>;
+    }
+  }
+
+  // Display Map component if Google Maps API is loaded
   return <Map locations={quakes} selectedMarker={markerSelected} />;
 }

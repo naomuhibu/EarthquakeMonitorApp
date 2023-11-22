@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from 'axios';
 
 interface Location {
   lat: number;
@@ -6,33 +7,29 @@ interface Location {
   mmi: number;
   name: string;
 }
-
-export const useGeoNetData = (): Location[] => {
+export const useEarthquakeData = (): Location[] => {
   const [locations, setLocations] = useState<Location[]>([]);
 
   useEffect(() => {
-    const fetchGeoNetData = async () => {
+    const fetchEarthquakeData = async () => {
       try {
-        const response = await fetch(
-          "https://api.geonet.org.nz/intensity/strong/processed/2020p666015"
-        );
-        const data = await response.json();
+        const response = await axios.get('http://127.0.0.1:8000/earthquakes/');
+        const data = response.data;
         const mappedLocations: Location[] = data.features.map(
-          (feature: any) => ({
-            lat: feature.geometry.coordinates[1],
-            lng: feature.geometry.coordinates[0],
-            mmi: feature.properties.mmi,
-            name: feature.properties.name,
+          (item: any) => ({
+            lat: item.geometry.coordinates[1],
+            lng: item.geometry.coordinates[0],
+            mmi: item.properties.mmi,
+            name: item.properties.location_name,
           })
         );
         setLocations(mappedLocations);
-        // console.log(mappedLocations);
       } catch (error) {
-        console.error("Error fetching GeoNet data:", error);
+        console.error("Error fetching earthquake data:", error);
       }
     };
 
-    fetchGeoNetData();
+    fetchEarthquakeData();
   }, []);
 
   return locations;

@@ -1,0 +1,4 @@
+.gitsecret/keys/random_seed
+!*.secret
+EMS_frontEnd-main/src/components/MapDisplay.tsx
+EMS_frontEnd-main/src/components/Map.tsx

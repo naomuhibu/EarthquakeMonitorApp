@@ -1,5 +1,4 @@
 import React from "react";
-import { Circle } from "@react-google-maps/api";
 
 interface QuakeViewProps {
   vquake: {
@@ -7,16 +6,21 @@ interface QuakeViewProps {
     lng: number;
     mmi: number;
     name: string;
-  };
-  onSelectView: () => void;
+  } | null;
+  onSelectView: (vquake: { lat: number; lng: number; mmi: number; name: string } | null) => void;
+  onMarkerSelect: (newData: any) => void;
+  isVisible: boolean;
 }
 
-const QuakeView: React.FC<QuakeViewProps> = ({ vquake, onSelectView }) => {
-  const bufferCenter: google.maps.LatLngLiteral = { lat: vquake.lat, lng: vquake.lng };
-  const bufferRadius = 500; // in meters
+const QuakeView: React.FC<QuakeViewProps> = ({ vquake, onSelectView, onMarkerSelect, isVisible}) => {
+  if (!isVisible || !vquake) {
+    return null; 
+  }
+  console.log("QuakeView Data:", vquake);
 
   const handleClick = () => {
-    onSelectView();
+    onSelectView(vquake);
+    onMarkerSelect(null);
   };
 
   return (
@@ -51,18 +55,6 @@ const QuakeView: React.FC<QuakeViewProps> = ({ vquake, onSelectView }) => {
           </table>
         </div>
       </div>
-      {/* Draw buffer on the map */}
-      <Circle
-        center={bufferCenter}
-        radius={bufferRadius}
-        options={{
-          strokeColor: "#FF0000",
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: "#FF0000",
-          fillOpacity: 0.35,
-        }}
-      />
     </>
   );
 };

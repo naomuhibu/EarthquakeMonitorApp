@@ -1,4 +1,3 @@
-import React from "react";
 import Map from "../components/Map";
 import { useLoadScript, Libraries } from "@react-google-maps/api";
 import { useEarthquakeData } from "../components/getQuakes";
@@ -19,6 +18,7 @@ export default function MapDisplay({ handleSelection }: MapDisplayProps) {
 
   const [selectedLocation, setSelectedLocation] = useState(null);
 
+
   const markerSelected = (location: any) => {
     setSelectedLocation(location);
     handleSelection(location);
@@ -34,7 +34,6 @@ export default function MapDisplay({ handleSelection }: MapDisplayProps) {
       return <div>Loading...</div>;
     }
   }
-
   // Display Map component if Google Maps API is loaded
-  return <Map locations={quakes} selectedMarker={markerSelected} />;
+  return <Map locations={quakes} selectedMarker={markerSelected} selectedQuake={selectedLocation} />;
 }
